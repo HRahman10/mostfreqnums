@@ -1,12 +1,60 @@
 <html>
     <head>
+        <script>
+            var openFile = function(event) {
+                try{
+                    var input = event.target;
 
+                    var reader = new FileReader();
+                    reader.onload = function() {
+                        var text = reader.result;
+                        var numsArray = text.split("\n");
+
+                        var numDict = {}
+                        numsArray.forEach(item => {
+                            var trimmedString = item.trim();
+                            if(trimmedString != ""){
+                                if (trimmedString in numDict){
+                                    numDict[trimmedString] = numDict[trimmedString] + 1;
+                                }else{
+                                    numDict[trimmedString] = 1;
+                                }
+                            }
+                        });
+
+                        var numDictMapped = Object.keys(numDict).map((key) => { 
+                            return [key, numDict[key]] 
+                        });
+
+                        var ordered = numDictMapped.sort((first, second) => { 
+                            return second[1] - first[1];
+                        });
+
+                        var strList = '<ul>'
+                        ordered.forEach(item => {
+                            strList += '<li>'+ item[0] + '</li>';
+                        });
+                        strList += '</ul>';
+                        document.getElementById("word-list").innerHTML = strList;
+                    };
+                    reader.readAsText(input.files[0]);
+                }
+                catch{
+                    document.getElementById("error").innerHTML = "An error has occured!";
+                }
+
+            };
+        </script>
     </head>
 
     <body>
-        <div>Hello Mohammed!</div>
+        <div>This is a very simple pure html and javascript application to display numbers in order of appearance frequency.</div>
+        <div>Please upload a file to process.</div>
         <div>
-            <input id="number-file" type="file" />
+            <input id="number-file" type="file" onchange='openFile(event)' />
+            <div id="word-list"></div>
+            <div id="error"></div>
         </div>
+    
     </body>
 </html>
